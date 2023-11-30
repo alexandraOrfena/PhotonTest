@@ -12,15 +12,17 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
 
+    private CustomInputAction _playerActionMap;
 
-    private DefaultInputActions _playerActionMap;
+    //private DefaultInputActions _playerActionMap;
     NetworkInputData newInputData;
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     public void Awake()
     {
-        _playerActionMap = new DefaultInputActions();
+        //_playerActionMap = new DefaultInputActions();
+        _playerActionMap = new CustomInputAction();
         newInputData = new NetworkInputData();
     }
 
@@ -32,7 +34,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     }
     public void ReadInput(InputAction.CallbackContext context)
     {
-        newInputData.direction = context.ReadValue<Vector2>();
+        newInputData.direction = context.ReadValue<Vector3>();
         //Debug.Log("oh, I'm confused");
         Debug.Log("show me this " + newInputData.direction);
     }
