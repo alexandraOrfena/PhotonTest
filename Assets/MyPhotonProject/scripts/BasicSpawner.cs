@@ -6,13 +6,41 @@ using Fusion.Sockets;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
 
+
+    private DefaultInputActions _playerActionMap;
+    NetworkInputData newInputData;
+
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+    public void Awake()
+    {
+        _playerActionMap = new DefaultInputActions();
+        newInputData = new NetworkInputData();
+    }
+
+
+    public void OnEnable()
+    {
+        _playerActionMap.Player.Enable();
+        _playerActionMap.Player.Move.performed += ReadInput;
+    }
+    public void ReadInput(InputAction.CallbackContext context)
+    {
+        newInputData.direction = context.ReadValue<Vector2>();
+        //Debug.Log("oh, I'm confused");
+        Debug.Log("show me this " + newInputData.direction);
+    }
+
+    public void OnDisable()
+    {
+        _playerActionMap.Player.Disable();
+    }
 
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner)
     {
@@ -28,7 +56,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     }
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
     {
-        var data = new NetworkInputData();
+        /*var data = new NetworkInputData();
 
         if (Input.GetKey(KeyCode.W))
             data.direction += Vector3.forward;
@@ -42,7 +70,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (Input.GetKey(KeyCode.D))
             data.direction += Vector3.right;
 
-        input.Set(data);
+        input.Set(data);*/
+        input.Set(newInputData); 
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -97,9 +126,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     async void StartGame(GameMode mode)
     {
+        //I was thinking I wanna have a separate game obj for runner cos I'll use it in input provider too, but runner shoud be null before start game// it can't exist on a scene
         // Create the Fusion runner and let it know that we will be providing user input
         _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.ProvideInput = true;
+        //_runner.ProvideInput = true;
+
 
         // Start or join (depends on gamemode) a session with a specific name
         await _runner.StartGame(new StartGameArgs()
@@ -110,7 +141,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
             //as clients will be forced to use the scene specified by the host
         });
-    }
+
+        }
 
     private void OnGUI()
     {
