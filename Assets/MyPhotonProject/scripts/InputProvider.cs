@@ -8,8 +8,7 @@ using System;
 
 public class InputProvider : MonoBehaviour
 {
-    private DefaultInputActions _playerActionMap;
-    //NetworkRunner localNetworkRunner;
+    DefaultInputActions _playerActionMap;
 
     public void Awake()
     {
@@ -21,7 +20,7 @@ public class InputProvider : MonoBehaviour
     {
         _playerActionMap.Player.Enable();
         _playerActionMap.Player.Move.performed += ReadInput;
-        /*var localNetworkRunner = FindObjectOfType<NetworkRunner>();
+       /* var localNetworkRunner = FindObjectOfType<NetworkRunner>();
         if (localNetworkRunner != null)
         {
             // enabling the input map
@@ -40,7 +39,7 @@ public class InputProvider : MonoBehaviour
 
     /*public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        Debug.Log(" i'm reading input from other calss");
+        Debug.Log(" i'm reading input from InputProvider class");
         // Same as in the snippet for SimulationBehaviour and NetworkBehaviour.
     }*/
 
@@ -130,4 +129,6 @@ public class InputProvider : MonoBehaviour
     {
         throw new NotImplementedException();
     }*/
+
+  
 }

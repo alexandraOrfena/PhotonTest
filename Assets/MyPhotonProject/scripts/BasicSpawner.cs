@@ -10,12 +10,21 @@ using UnityEngine.InputSystem;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
+    //network object xy and id
+    //networkcontroller to work with networt class update position - always call when i changed position
+    //event in this class from network that someone moved it
+
+    //facade to work INetworkRunnerCallbacks with networkcontroller
+
+
     private NetworkRunner _runner;
 
     private CustomInputAction _playerActionMap;
 
     //private DefaultInputActions _playerActionMap;
     NetworkInputData newInputData;
+
+    //[SerializeField] InputProvider inputProvider;
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
@@ -36,7 +45,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         newInputData.direction = context.ReadValue<Vector3>();
         //Debug.Log("oh, I'm confused");
-        Debug.Log("show me this " + newInputData.direction);
+        Debug.Log("read input from basic spawner " + newInputData.direction);
     }
 
     public void OnDisable()
@@ -73,6 +82,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             data.direction += Vector3.right;
 
         input.Set(data);*/
+
+        //Debug.Log("show me every time OnInput from Photon is called, I wanna know if I can set datat somewhere else");
         input.Set(newInputData); 
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
@@ -131,7 +142,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         //I was thinking I wanna have a separate game obj for runner cos I'll use it in input provider too, but runner shoud be null before start game// it can't exist on a scene
         // Create the Fusion runner and let it know that we will be providing user input
         _runner = gameObject.AddComponent<NetworkRunner>();
-        //_runner.ProvideInput = true;
+        _runner.ProvideInput = true;
+
+        //inputProvider.enabled = true;
 
 
         // Start or join (depends on gamemode) a session with a specific name
