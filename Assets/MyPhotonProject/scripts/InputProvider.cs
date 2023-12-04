@@ -8,11 +8,21 @@ using System;
 
 public class InputProvider : MonoBehaviour
 {
-    DefaultInputActions _playerActionMap;
+    private CustomInputAction _playerActionMap;
+    NetworkInputData newInputData;
+
+    NetworkInput networkInput;
 
     public void Awake()
     {
-        _playerActionMap = new DefaultInputActions();
+        _playerActionMap = new CustomInputAction();
+        newInputData = new NetworkInputData();
+    }
+
+    public void SetNetworkInput(NetworkInput input)
+    {
+        networkInput = input;
+        input.Set(newInputData);
     }
 
 
@@ -20,28 +30,22 @@ public class InputProvider : MonoBehaviour
     {
         _playerActionMap.Player.Enable();
         _playerActionMap.Player.Move.performed += ReadInput;
-       /* var localNetworkRunner = FindObjectOfType<NetworkRunner>();
-        if (localNetworkRunner != null)
-        {
-            // enabling the input map
-            _playerActionMap.Player.Enable();
-            _playerActionMap.Player.Move.performed += ReadInput;
-            localNetworkRunner.AddCallbacks(this);
-        }*/
+
+        /* var localNetworkRunner = FindObjectOfType<NetworkRunner>();
+         if (localNetworkRunner != null)
+         {
+             // enabling the input map
+             _playerActionMap.Player.Enable();
+             _playerActionMap.Player.Move.performed += ReadInput;
+             localNetworkRunner.AddCallbacks(this);
+         }*/
     }
 
     public void ReadInput(InputAction.CallbackContext context)
     {
-        var tmp = context.ReadValue<Vector2>();
-        Debug.Log("oh, I'm confused");
-        Debug.Log("show me this "+tmp);
+        newInputData.direction = context.ReadValue<Vector3>();
+        Debug.Log("read input from input provider class " + newInputData.direction);
     }
-
-    /*public void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-        Debug.Log(" i'm reading input from InputProvider class");
-        // Same as in the snippet for SimulationBehaviour and NetworkBehaviour.
-    }*/
 
     public void OnDisable()
     {
@@ -55,80 +59,4 @@ public class InputProvider : MonoBehaviour
         }*/
     }
 
-    /*public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnConnectedToServer(NetworkRunner runner)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnDisconnectedFromServer(NetworkRunner runner)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnSceneLoadDone(NetworkRunner runner)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnSceneLoadStart(NetworkRunner runner)
-    {
-        throw new NotImplementedException();
-    }*/
-
-  
 }

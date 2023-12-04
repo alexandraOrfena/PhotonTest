@@ -18,40 +18,14 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
 
     private NetworkRunner _runner;
+    [SerializeField] private InputProvider _inputProvider;
 
-    private CustomInputAction _playerActionMap;
+    //NetworkInputData newInputData;
 
-    //private DefaultInputActions _playerActionMap;
-    NetworkInputData newInputData;
-
-    //[SerializeField] InputProvider inputProvider;
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-    public void Awake()
-    {
-        //_playerActionMap = new DefaultInputActions();
-        _playerActionMap = new CustomInputAction();
-        newInputData = new NetworkInputData();
-    }
 
-
-    public void OnEnable()
-    {
-        _playerActionMap.Player.Enable();
-        _playerActionMap.Player.Move.performed += ReadInput;
-    }
-    public void ReadInput(InputAction.CallbackContext context)
-    {
-        newInputData.direction = context.ReadValue<Vector3>();
-        //Debug.Log("oh, I'm confused");
-        Debug.Log("read input from basic spawner " + newInputData.direction);
-    }
-
-    public void OnDisable()
-    {
-        _playerActionMap.Player.Disable();
-    }
 
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner)
     {
@@ -67,6 +41,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     }
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
     {
+        //commented code for reading input with old input system  
         /*var data = new NetworkInputData();
 
         if (Input.GetKey(KeyCode.W))
@@ -84,7 +59,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         input.Set(data);*/
 
         //Debug.Log("show me every time OnInput from Photon is called, I wanna know if I can set datat somewhere else");
-        input.Set(newInputData); 
+        _inputProvider.SetNetworkInput(input);
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
