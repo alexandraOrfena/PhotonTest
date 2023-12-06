@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -25,6 +26,14 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+
+    private bool _mouseButton0;
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+            Debug.Log("show when click is done ");
+        _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0); ;
+    }
 
 
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner)
@@ -56,9 +65,16 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (Input.GetKey(KeyCode.D))
             data.direction += Vector3.right;
 
-        input.Set(data);*/
+        //input.Set(data);
 
         //Debug.Log("show me every time OnInput from Photon is called, I wanna know if I can set datat somewhere else");
+
+        if (_mouseButton0)
+           data.buttons |= NetworkInputData.MOUSEBUTTON1;
+        _mouseButton0 = false;
+
+        input.Set(data);*/
+
         _inputProvider.SetNetworkInput(input);
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

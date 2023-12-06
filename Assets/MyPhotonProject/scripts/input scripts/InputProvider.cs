@@ -9,9 +9,11 @@ using System;
 public class InputProvider : MonoBehaviour
 {
     private CustomInputAction _playerActionMap;
-    NetworkInputData newInputData;
+    public NetworkInputData newInputData;
 
     NetworkInput networkInput;
+
+    private bool _mouseButton0;
 
     public void Awake()
     {
@@ -22,7 +24,11 @@ public class InputProvider : MonoBehaviour
     public void SetNetworkInput(NetworkInput input)
     {
         networkInput = input;
+        //_mouseButton0 = false;
         input.Set(newInputData);
+        newInputData.buttons = 0;
+        //newInputData = new NetworkInputData();
+
     }
 
 
@@ -30,6 +36,8 @@ public class InputProvider : MonoBehaviour
     {
         _playerActionMap.Player.Enable();
         _playerActionMap.Player.Move.performed += ReadInput;
+        _playerActionMap.Player.ButtonClick.performed += ReadMouseButtonClicks;
+
 
         /* var localNetworkRunner = FindObjectOfType<NetworkRunner>();
          if (localNetworkRunner != null)
@@ -45,6 +53,14 @@ public class InputProvider : MonoBehaviour
     {
         newInputData.direction = context.ReadValue<Vector3>();
         Debug.Log("read input from input provider class " + newInputData.direction);
+    }
+
+    public void ReadMouseButtonClicks(InputAction.CallbackContext context)
+    {
+        _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0);
+        if (_mouseButton0)
+            newInputData.buttons |= NetworkInputData.MOUSEBUTTON1;
+        Debug.Log("reading button clicks ");
     }
 
     public void OnDisable()
