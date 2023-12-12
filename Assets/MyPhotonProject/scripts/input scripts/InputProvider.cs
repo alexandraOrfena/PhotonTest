@@ -1,17 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
-using Fusion.Sockets;
 using UnityEngine.InputSystem;
-using System;
 
-public class InputProvider : MonoBehaviour
+
+public class InputProvider : MonoBehaviour, IInputProvider
 {
     private CustomInputAction _playerActionMap;
     public NetworkInputData newInputData;
 
-    NetworkInput networkInput;
+    //NetworkInput networkInput;
 
     private bool _mouseButton0;
 
@@ -23,7 +20,7 @@ public class InputProvider : MonoBehaviour
 
     public void SetNetworkInput(NetworkInput input)
     {
-        networkInput = input;
+        //networkInput = input;
         //_mouseButton0 = false;
         input.Set(newInputData);
         newInputData.buttons = 0;
@@ -47,6 +44,13 @@ public class InputProvider : MonoBehaviour
              _playerActionMap.Player.Move.performed += ReadInput;
              localNetworkRunner.AddCallbacks(this);
          }*/
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+            Debug.Log("show when click is done ");
+        _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0);
     }
 
     public void ReadInput(InputAction.CallbackContext context)
