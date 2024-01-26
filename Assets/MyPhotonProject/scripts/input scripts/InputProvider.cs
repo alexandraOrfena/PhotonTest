@@ -64,7 +64,7 @@ public class InputProvider : MonoBehaviour, IInputProvider
         _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0);
         if (_mouseButton0)
             newInputData.buttons |= NetworkInputData.MOUSEBUTTON1;
-        Debug.Log("reading button clicks ");
+        //Debug.Log("reading button clicks ");
     }
 
     public void OnDisable()
